@@ -25,6 +25,12 @@ Battle-tested prompts designed to accelerate your Web3 security workflow — fro
 5. **Chain prompts together.** These work best as a pipeline: recon → code review → severity assessment → report writing.
 6. **Iterate.** If the first output isn't useful, refine with more context or break the task into smaller pieces.
 
+### Make It Your Own
+
+All prompts are intentionally **generic** — they're not tied to any specific protocol category (lending, DEX, bridge, etc.). You can use them on whatever type of protocol you're auditing.
+
+However, the best results come when you **append your own custom heuristics and checks** to `common/review-checklist.md` alongside the existing generic ones. Think of the checklist as a starting point — add your own category-specific patterns, past findings, and edge cases at the end, then run it. The generic + your custom checks together will give you significantly better output than either alone.
+
 ### Tips
 
 - **Always verify AI output.** These prompts accelerate your workflow — they don't replace your expertise. The AI will hallucinate findings, miss context, and get severity wrong. You are the final reviewer.
