@@ -10,15 +10,15 @@ Battle-tested prompts designed to accelerate your Web3 security workflow — fro
 
 | Directory | Description |
 |-----------|-------------|
-| `bug-bounty/` | Prompts for bug bounty hunting workflows |
-| `private-audits/` | Prompts and full audit guide with rules, heuristics, and verifier |
-| `contests/` | Prompts for audit contest strategies |
+| `bug-bounty/` | Bug bounty hunting prompts — scope, severity (critical/high only), trust model |
+| `private-audits/` | Private audit prompts — scope, severity (all levels), trust model |
+| `contests/` | Audit contest strategy, time management, and report templates |
 | `zk-audits/` | ZK circuit audit guide — soundness, completeness, privacy, DSL-specific checks |
-| `common/` | Shared prompts for patterns, attack vectors, and severity |
+| `common/` | **Shared review checklist** (used by bug-bounty & private-audit guides), attack vectors, severity assessment, Solidity patterns |
 
 ## How to Use
 
-1. **Pick the directory** that matches your engagement type (`bug-bounty/`, `private-audits/`, or `contests/`). Use `common/` prompts alongside any of them.
+1. **Pick the directory** that matches your engagement type (`bug-bounty/`, `private-audits/`, `contests/`, or `zk-audits/`). Use `common/` prompts alongside any of them.
 2. **Copy the prompt** into your AI tool of choice (ChatGPT, Claude, Cursor, etc.).
 3. **Fill in the placeholders** — protocol name, contract code, chain, etc. The more context you provide, the better the output.
 4. **Feed actual code.** Don't just describe the contract — paste the Solidity source directly into the prompt for real analysis.
