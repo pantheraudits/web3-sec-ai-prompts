@@ -52,6 +52,14 @@ The prompts, rules, and heuristics in this repo are shaped by lessons learned fr
 - [Floating Pragma — Awesome ZK Proofs](https://floatingpragma.io/awesome-zk-proofs/)
 - [Nethermind ZK Security Checklist (PDF)](https://drive.google.com/file/d/1hOkeY2U4K8eyf-Vcy1UsgqXqLRuiGgAi/view)
 
+## Disclaimer
+
+These prompts are for **educational purposes** and are meant to **speed up** your audit workflow — not replace it. AI is a force multiplier, not a substitute for manual review.
+
+**Before using any prompt, make sure you understand the protocol and how it works.** Read the docs, study the architecture, and trace the flows yourself first. If you don't understand what the code is doing, no prompt will magically find bugs for you. The output will be shallow, generic, and unreliable.
+
+Manual review is non-negotiable. Use these prompts to augment your process, catch things you might miss, and structure your thinking — but your brain is still the primary tool.
+
 ## Contributing
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines on adding or improving prompts.
