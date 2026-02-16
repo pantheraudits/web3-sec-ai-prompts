@@ -83,7 +83,16 @@ The shared review checklist used by `bug-bounty/hunting-guide.md`, `private-audi
 - **Duplicate values in lists:** When adding new tokens/addresses, does it check for duplicates?
 - **Missing logic:** Look for what's MISSING, not just what's wrong. Missing checks are harder to spot than incorrect ones.
 
-### 14. What's NOT Listed Above
+### 14. Forked Protocols (skip if not a fork)
+If this protocol is a fork of an existing protocol, this section is critical:
+- **Identify all custom changes.** Diff the fork against the original — every modification is a sensitive area where bugs are likely introduced.
+- **Understand why each change was made.** Does the change introduce new state, new roles, new token interactions, or altered math? Has it introduced any new issues?
+- **Check the original protocol's security considerations.** Are there security recommendations or invariants from the original that this fork has NOT implemented?
+- **Check the original protocol's known issues.** Are there any disclosed bugs or unresolved issues in the original that also affect this fork?
+- **Inherited vulnerabilities.** A fork inherits not just security from an established protocol, but also its vulnerabilities. "Minor" modifications — custom proxies, oracle mechanisms, admin controls, fee logic — are frequently the source of new critical exploits.
+- **Upgraded dependencies.** Did the fork change compiler version, OpenZeppelin version, or other dependencies? Check for breaking changes or deprecated patterns.
+
+### 15. What's NOT Listed Above
 The above areas are critical, but don't stop there. Use your own experience and imagination to find bugs in areas not mentioned. Explore all possible paths, check every single line, and trace all flows end-to-end.
 ```
 
