@@ -32,6 +32,26 @@ Battle-tested prompts designed to accelerate your Web3 security workflow — fro
 - **Write a PoC.** If you can't prove a finding with a Foundry/Hardhat test, it's probably not valid.
 - **Use the best model available.** For deep code analysis, use Claude, GPT-5.2 or +, or similar. Don't use lightweight models for security work.
 
+## Inspirations & Credits
+
+The prompts, rules, and heuristics in this repo are shaped by lessons learned from these resources:
+**Links**
+- [Solodit](https://solodit.cyfrin.io/)
+- [Updraft Cyfrin](https://updraft.cyfrin.io/)
+
+**Videos:**
+- [Deep Dive into LLMs like ChatGPT](https://www.youtube.com/watch?v=7xTGNNLPyMI)
+- [How I use LLMs](https://www.youtube.com/watch?v=EWvNQjAaOHw)
+- [DevDacian - Smart Contract Heuristics & Auditor Branding](https://youtu.be/AiNneURcxDw)
+
+**ZK Security:**
+- [PositiveSecurity — ZK Audit Guide](https://github.com/PositiveSecurity/zk-audit-guide)
+- [Nethermind — ZK Circuit Security: A Guide for Engineers and Architects](https://www.nethermind.io/blog/zk-circuit-security-a-guide-for-engineers-and-architects)
+- [Safe Edges — A Comprehensive Engineering Guide to ZK Circuit Security](https://medium.com/@safeedges/the-silent-guardian-a-comprehensive-engineering-guide-to-zk-circuit-security-9db143dc67f9)
+- [Bernhard Mueller — Finding Soundness Bugs in ZK Circuits](https://muellerberndt.medium.com/finding-soundness-bugs-in-zk-circuits-ea23387a0e1e)
+- [Floating Pragma — Awesome ZK Proofs](https://floatingpragma.io/awesome-zk-proofs/)
+- [Nethermind ZK Security Checklist (PDF)](https://drive.google.com/file/d/1hOkeY2U4K8eyf-Vcy1UsgqXqLRuiGgAi/view)
+
 ## Contributing
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines on adding or improving prompts.
