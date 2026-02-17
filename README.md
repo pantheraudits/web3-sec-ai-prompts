@@ -14,7 +14,7 @@ Battle-tested prompts designed to accelerate your Web3 security workflow — fro
 | `private-audits/` | Private audit prompts — scope, severity (all levels), trust model |
 | `contests/` | Audit contest strategy, time management, and report templates |
 | `zk-audits/` | ZK circuit audit guide — soundness, completeness, privacy, DSL-specific checks |
-| `common/` | **Shared review checklist** (used by bug-bounty & private-audit guides), attack vectors, severity assessment, Solidity patterns |
+| `common/` | **Shared review checklist** (used by bug-bounty & private-audit guides), **custom primer guide**, attack vectors, severity assessment, Solidity patterns |
 
 ## How to Use
 
@@ -30,6 +30,12 @@ Battle-tested prompts designed to accelerate your Web3 security workflow — fro
 All prompts are intentionally **generic** — they're not tied to any specific protocol category (lending, DEX, bridge, etc.). You can use them on whatever type of protocol you're auditing.
 
 However, the best results come when you **append your own custom heuristics and checks** to `common/review-checklist.md` alongside the existing generic ones. Think of the checklist as a starting point — add your own category-specific patterns, past findings, and edge cases at the end, then run it. The generic + your custom checks together will give you significantly better output than either alone.
+
+### Build a Custom Primer
+
+For even better results, **build a protocol-specific primer before running any prompt.** Read the code manually, note every area that feels sensitive — old compiler versions, constants that don't match docs, EIP compliance gaps, missing guards, confusing logic — and compile these observations into a targeted primer. Then feed the primer to the AI alongside the contract code so it investigates exactly what you flagged instead of running a generic scan.
+
+See **[`common/custom-primer.md`](common/custom-primer.md)** for the full step-by-step methodology, example entries, and a ready-to-use prompt template.
 
 ### Tips
 
