@@ -14,7 +14,19 @@ Battle-tested prompts designed to accelerate your Web3 security workflow — fro
 | `private-audits/` | Private audit prompts — scope, severity (all levels), trust model |
 | `contests/` | Audit contest strategy, time management, and report templates |
 | `zk-audits/` | ZK circuit audit guide — soundness, completeness, privacy, DSL-specific checks |
-| `common/` | **Shared review checklist** (used by bug-bounty & private-audit guides), **custom primer guide**, attack vectors, severity assessment, Solidity patterns |
+| `common/` | **Shared review checklist**, **multi-expert review**, **custom primer guide**, **protocol detection**, **grep patterns**, attack vectors, severity assessment, Solidity patterns |
+
+## Quick Start (2 minutes)
+
+Just want to get going? Here's the fastest path:
+
+1. Open the contract you want to review.
+2. Copy the prompt from **[`bug-bounty/hunting-guide.md`](bug-bounty/hunting-guide.md)** (for bounties) or **[`private-audits/audit-guide.md`](private-audits/audit-guide.md)** (for audits).
+3. Paste it into your AI tool (Cursor, ChatGPT, Claude, etc.), fill the placeholders, paste the contract code.
+4. Attach **[`common/review-checklist.md`](common/review-checklist.md)** as context (or paste it in).
+5. Run it. Review the output. Write a PoC for anything that looks real.
+
+That's the basic flow. For significantly better results, read on for the full pipeline.
 
 ## How to Use
 
@@ -22,8 +34,48 @@ Battle-tested prompts designed to accelerate your Web3 security workflow — fro
 2. **Copy the prompt** into your AI tool of choice (ChatGPT, Claude, Cursor, etc.).
 3. **Fill in the placeholders** — protocol name, contract code, chain, etc. The more context you provide, the better the output.
 4. **Feed actual code.** Don't just describe the contract — paste the Solidity source directly into the prompt for real analysis.
-5. **Chain prompts together.** These work best as a pipeline: recon → code review → severity assessment → report writing.
+5. **Chain prompts together.** These work best as a pipeline — see the recommended pipeline below.
 6. **Iterate.** If the first output isn't useful, refine with more context or break the task into smaller pieces.
+
+### Recommended Pipeline
+
+For maximum coverage, chain the prompts in this order. Each step is marked as manual (you do it), AI-assisted (paste prompt into AI), or both.
+
+| Step | What | File | Who does it |
+|------|------|------|-------------|
+| **1** | **Protocol Detection** — identify chain, protocol type, architecture, and type-specific attack vectors | [`common/protocol-detection.md`](common/protocol-detection.md) | AI — paste the prompt + code, get back a protocol profile |
+| **2** | **Grep Surface Mapping** — run search patterns to map external calls, access control, dangerous ops | [`common/grep-patterns.md`](common/grep-patterns.md) | Manual — run the `rg`/`grep` commands in your terminal, save results |
+| **3** | **Recon / Threat Model** — gather intelligence, map threat actors, prioritize attack surfaces | [`bug-bounty/recon-checklist.md`](bug-bounty/recon-checklist.md) or [`private-audits/threat-modeling.md`](private-audits/threat-modeling.md) | AI — paste the prompt + protocol info |
+| **4** | **Build Custom Primer** — read the code yourself, note sensitive areas, hunches, questions | [`common/custom-primer.md`](common/custom-primer.md) | Manual — you read the code and write primer entries |
+| **5** | **Run the Primer** — feed your primer entries + code to AI for targeted investigation | Template inside [`common/custom-primer.md`](common/custom-primer.md) | AI — paste the primer template + your entries + code |
+| **6** | **Standard Review** — systematic checklist-based review with adversarial triager | [`audit-guide.md`](private-audits/audit-guide.md) or [`hunting-guide.md`](bug-bounty/hunting-guide.md) + [`common/review-checklist.md`](common/review-checklist.md) | AI — paste the prompt + code |
+| **7** | **Multi-Expert Review** — 3-pass adversarial review (systematic → economic → skeptical triager) | [`common/multi-expert-review.md`](common/multi-expert-review.md) | AI — paste the prompt + code (use on highest-value contracts) |
+| **8** | **Classify Findings** — structure each finding with attack flows, economic analysis, severity score | [`private-audits/finding-classification.md`](private-audits/finding-classification.md) + [`common/severity-assessment.md`](common/severity-assessment.md) | AI — paste the prompt + your raw finding |
+
+**You don't need every step every time.** Pick a path based on your situation:
+
+| Situation | Steps to use |
+|-----------|-------------|
+| Quick bug bounty hunt (limited time) | 1 → 4 → 6 |
+| Serious bug bounty hunt | 1 → 2 → 4 → 5 → 6 → 8 |
+| Private audit (full) | All 8 steps |
+| Contest (time-boxed) | 1 → 2 → 6 → 7 → 8 |
+| ZK circuit audit | 1 → 4 → [`zk-audits/hunting-guide.md`](zk-audits/hunting-guide.md) |
+
+### What's in `common/`
+
+The `common/` directory contains shared prompts and tools used across all engagement types:
+
+| File | What it does | When to use |
+|------|-------------|-------------|
+| [`review-checklist.md`](common/review-checklist.md) | 15-section vulnerability checklist + adversarial triager/verifier | Every review — this is the core checklist |
+| [`multi-expert-review.md`](common/multi-expert-review.md) | 3-pass review: systematic auditor → economic attacker → skeptical triager | High-value contracts where you need maximum confidence |
+| [`custom-primer.md`](common/custom-primer.md) | Guide + template for building protocol-specific primers from manual reading | When you want to turn your manual observations into AI-targeted prompts |
+| [`protocol-detection.md`](common/protocol-detection.md) | Auto-detect chain, protocol type, architecture → get type-specific attack checklist | First step of any engagement — gives you a protocol profile |
+| [`grep-patterns.md`](common/grep-patterns.md) | Ready-to-run search patterns for mapping attack surface | Start of engagement — run in terminal, takes 5 minutes |
+| [`severity-assessment.md`](common/severity-assessment.md) | Quantitative severity formula (Impact × Likelihood × Exploitability) | When classifying any finding — prevents over/under-rating |
+| [`defi-attack-vectors.md`](common/defi-attack-vectors.md) | Known DeFi attack patterns (flash loans, oracles, MEV, bridges, tokens) | When reviewing DeFi protocols |
+| [`solidity-patterns.md`](common/solidity-patterns.md) | Common Solidity vulnerability patterns (reentrancy, access control, arithmetic) | Quick first-pass scan of any Solidity contract |
 
 ### Make It Your Own
 
@@ -36,6 +88,26 @@ However, the best results come when you **append your own custom heuristics and 
 For even better results, **build a protocol-specific primer before running any prompt.** Read the code manually, note every area that feels sensitive — old compiler versions, constants that don't match docs, EIP compliance gaps, missing guards, confusing logic — and compile these observations into a targeted primer. Then feed the primer to the AI alongside the contract code so it investigates exactly what you flagged instead of running a generic scan.
 
 See **[`common/custom-primer.md`](common/custom-primer.md)** for the full step-by-step methodology, example entries, and a ready-to-use prompt template.
+
+### Example Walkthrough
+
+Here's what the pipeline looks like in practice when auditing a fictional lending protocol:
+
+**Step 1 — Protocol Detection (AI):** Paste the contracts into the protocol detection prompt. The AI tells you it's a Solidity lending protocol on EVM, identifies Chainlink oracle dependency, and lists lending-specific attack vectors (oracle manipulation, liquidation logic, interest overflow, flash loan borrow attacks).
+
+**Step 2 — Grep (Manual):** Run `rg "\.call\{" --glob "*.sol"` and the other patterns from `grep-patterns.md`. You find 12 external calls, 3 without reentrancy guards, and 2 unchecked return values. Save this list.
+
+**Step 3 — Threat Model (AI):** Feed the protocol info into the threat modeling prompt. Get back a prioritized list: P0 is oracle manipulation → bad liquidations, P1 is flash loan collateral inflation.
+
+**Step 4 — Custom Primer (Manual):** You read the contracts. You notice: the liquidation bonus is hardcoded at 10% but docs say 5%. The oracle staleness check allows 24-hour-old prices. The interest rate model uses `unchecked` math. You write these into primer entries.
+
+**Step 5 — Run Primer (AI):** Paste the primer template + your entries + the contract code. The AI confirms the liquidation bonus mismatch is a real bug (Medium), finds the stale oracle creates a 24-hour arbitrage window (High), and dismisses the unchecked math as safe.
+
+**Step 6 — Standard Review (AI):** Run the full checklist review. Catches additional issues: missing zero-address check on a critical setter, a reentrancy path through the liquidation callback.
+
+**Step 7 — Multi-Expert (AI):** Run the 3-pass review on the core lending pool contract. Pass 1 finds 4 issues, Pass 2 finds 2 economic attacks, Pass 3 dismisses 3 as false positives and downgrades 1. Two survive as VALID.
+
+**Step 8 — Classify (AI):** Feed each surviving finding into the classification template. Get structured reports with attack flows, economic analysis, and severity scores.
 
 ### Tips
 
@@ -50,6 +122,7 @@ The prompts, rules, and heuristics in this repo are shaped by lessons learned fr
 **Links**
 - [Solodit](https://solodit.cyfrin.io/)
 - [Updraft Cyfrin](https://updraft.cyfrin.io/)
+- [Forefy .context](https://github.com/anthropics/courses) — multi-expert review pattern, severity formula, and protocol detection heuristics adapted from their agentic audit framework
 
 **Videos:**
 - [Deep Dive into LLMs like ChatGPT](https://www.youtube.com/watch?v=7xTGNNLPyMI)

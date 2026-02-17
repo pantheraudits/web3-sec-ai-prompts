@@ -96,21 +96,46 @@ If this protocol is a fork of an existing protocol, this section is critical:
 The above areas are critical, but don't stop there. Use your own experience and imagination to find bugs in areas not mentioned. Explore all possible paths, check every single line, and trace all flows end-to-end.
 ```
 
-## Verifier
+## Verifier & Triager
 
 Append this after the review checklist in your prompt:
 
 ```
-## Verifier
+## Verifier & Triager
 
-After identifying a potential bug, switch to verifier mode:
+After identifying a potential bug, switch to adversarial verification mode. Your goal is to DISPROVE each finding — only findings that survive this scrutiny should be reported.
 
-1. Can this actually be exploited, or is it based on a wrong assumption?
-2. Who are the actors involved? What are the constraints?
-3. Are there upstream or downstream checks in the flow that invalidate this finding?
-4. Is the precondition realistic on mainnet, or purely theoretical?
-5. Does the exploit require trusted-actor malice (if so, it's invalid per trust model)?
-6. Does the exploit require conditions excluded by the program's scope/rules?
+### Step 1: Tell Two Stories
 
-Only output findings that survive verification. For each finding, state clearly why it's valid and not blocked by other checks in the system.
+For every potential finding, articulate both paths:
+
+INNOCENT USER STORY: [What does a normal user expect? e.g., "Alice deposits 100 USDC into the vault, expects proportional shares, withdraws later with yield."]
+
+ATTACKER STORY: [What does the attacker actually do? e.g., "Bob front-runs Alice's deposit with a flash loan, inflates share price via donation, Alice receives fewer shares, Bob profits on withdrawal."]
+
+If you cannot write a concrete attacker story with specific steps, the finding is likely invalid.
+
+### Step 2: Disprove the Finding
+
+Actively try to PROVE this is NOT a real bug:
+
+1. Can this actually be exploited, or is it based on a wrong assumption about how the code works?
+2. Trace the FULL call path — are there upstream checks (in callers) or downstream checks (in callees) that prevent exploitation?
+3. Is the precondition realistic on mainnet, or purely theoretical? Would it require unrealistic gas costs, capital, or timing?
+4. Does the exploit require trusted-actor malice? (If so, it's invalid per trust model.)
+5. Does the exploit require conditions excluded by the program's scope/rules?
+6. Is the attack economically rational? Calculate: attack cost (gas + capital + slippage + opportunity cost) vs attack profit. If cost > profit, it's not exploitable in practice.
+7. Do existing protections block it? (reentrancy guards, timelocks, slippage checks, pause mechanisms, allowlists)
+
+### Step 3: Label the Finding
+
+- **VALID** — Survives all checks above. Exploitable with realistic conditions. Include in report.
+- **QUESTIONABLE** — Cannot fully disprove, but also cannot fully prove. Flag for manual PoC verification.
+- **DISMISSED** — Disproven by existing protections, economic irrationality, or incorrect assumptions. Do NOT include in report.
+- **OVERCLASSIFIED** — Real issue, but severity is inflated. Suggest correct severity with reasoning.
+
+Only output VALID and QUESTIONABLE findings. For each, state clearly:
+- Why it survived scrutiny
+- Which disproval attempts failed (and why they failed)
+- The concrete attacker story with step-by-step exploit flow
 ```
