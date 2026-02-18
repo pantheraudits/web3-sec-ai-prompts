@@ -15,7 +15,7 @@ Battle-tested prompts designed to accelerate your Web3 security workflow — fro
 | `contests/` | Audit contest strategy, time management, and report templates |
 | `zk-audits/` | ZK circuit audit guide — soundness, completeness, privacy, DSL-specific checks |
 | `common/` | **Shared review checklist**, **multi-expert review**, **custom primer guide**, **protocol detection**, **grep patterns**, attack vectors, severity assessment, Solidity patterns |
-| `claude-skill/` | **Automated audit skill** — runs the full pipeline (context → review → triage → report) as a Cursor/Claude skill |
+| `claude-skill/` | **Panther Audit** — automated skill that runs the full pipeline (context → review → triage → report) in Cursor/Claude Code |
 
 ## Quick Start (2 minutes)
 
@@ -63,11 +63,11 @@ For maximum coverage, chain the prompts in this order. Each step is marked as ma
 | Contest (time-boxed) | 1 → 2 → 6 → 7 → 8 |
 | ZK circuit audit | 1 → 4 → [`zk-audits/hunting-guide.md`](zk-audits/hunting-guide.md) |
 
-### Automated Pipeline (Cursor / Claude Skill)
+### Automated Pipeline (Audit Forge)
 
-Don't want to run each step manually? The **[`claude-skill/`](claude-skill/)** directory contains a Cursor/Claude skill that automates the full pipeline. When installed, just say "audit this contract" and it runs all 4 phases (context → dual-expert review → adversarial triage → structured report) automatically.
+Don't want to run each step manually? **Panther Audit** (`claude-skill/`) is a Cursor/Claude skill that automates the full pipeline. Install it once, say "audit `src/Vault.sol`", and it runs all 4 phases (context → dual-expert review → adversarial triage → structured report) automatically.
 
-See **[`claude-skill/README.md`](claude-skill/README.md)** for installation and usage. The skill reads from the same `common/` files — so any customizations you make to the checklists apply to both the manual prompts and the automated skill.
+See **[`claude-skill/README.md`](claude-skill/README.md)** for step-by-step installation and a concrete walkthrough of auditing a protocol. The skill reads from the same `common/` files — so any customizations you make to the checklists apply to both the manual prompts and the automated skill.
 
 ### What's in `common/`
 

@@ -1,9 +1,9 @@
 ---
-name: web3-security-audit
+name: panther-audit
 description: Automated smart contract security audit pipeline. Runs 4 phases — context building, dual-expert review, adversarial triage, and structured reporting. Use when auditing smart contracts, reviewing Solidity/Move/Vyper/Rust code for vulnerabilities, or when the user asks to audit, review, or find bugs in Web3 code.
 ---
 
-# Web3 Security Audit Skill
+# Panther Audit
 
 Automated pipeline that runs a full security review in 4 phases. Each phase feeds the next — context sharpens the review, the review feeds the triager, and only findings that survive triage make it to the report.
 
