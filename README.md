@@ -15,6 +15,7 @@ Battle-tested prompts designed to accelerate your Web3 security workflow — fro
 | `contests/` | Audit contest strategy, time management, and report templates |
 | `zk-audits/` | ZK circuit audit guide — soundness, completeness, privacy, DSL-specific checks |
 | `common/` | **Shared review checklist**, **multi-expert review**, **custom primer guide**, **protocol detection**, **grep patterns**, attack vectors, severity assessment, Solidity patterns |
+| `claude-skill/` | **Automated audit skill** — runs the full pipeline (context → review → triage → report) as a Cursor/Claude skill |
 
 ## Quick Start (2 minutes)
 
@@ -61,6 +62,12 @@ For maximum coverage, chain the prompts in this order. Each step is marked as ma
 | Private audit (full) | All 8 steps |
 | Contest (time-boxed) | 1 → 2 → 6 → 7 → 8 |
 | ZK circuit audit | 1 → 4 → [`zk-audits/hunting-guide.md`](zk-audits/hunting-guide.md) |
+
+### Automated Pipeline (Cursor / Claude Skill)
+
+Don't want to run each step manually? The **[`claude-skill/`](claude-skill/)** directory contains a Cursor/Claude skill that automates the full pipeline. When installed, just say "audit this contract" and it runs all 4 phases (context → dual-expert review → adversarial triage → structured report) automatically.
+
+See **[`claude-skill/README.md`](claude-skill/README.md)** for installation and usage. The skill reads from the same `common/` files — so any customizations you make to the checklists apply to both the manual prompts and the automated skill.
 
 ### What's in `common/`
 
