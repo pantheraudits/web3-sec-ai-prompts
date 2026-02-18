@@ -80,11 +80,19 @@ Claude.ai web doesn't have file access, so you'll need to upload files and paste
 
 ### Basic
 
-Open a contract in Cursor or navigate to your project in Claude Code, then:
+**In Cursor:**
+1. Open your project in Cursor
+2. Open the chat panel (Cmd+L) or use Agent mode (Cmd+I)
+3. Type your message — the skill triggers automatically:
 
-> "Audit `src/LendingPool.sol` for security vulnerabilities."
+> "Audit `src/LendingPool.sol` for security vulnerabilities. The protocol is [Name], a [type] protocol on EVM."
 
-The skill triggers automatically, reads the file, and runs all 4 phases.
+**In Claude Code:**
+1. Open terminal in your project directory
+2. Run `claude` to start a session
+3. Type the same message
+
+No extra setup beyond installation. The skill reads the file and runs all 4 phases.
 
 ### With a Custom Primer
 
