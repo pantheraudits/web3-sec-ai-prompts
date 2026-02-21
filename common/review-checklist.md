@@ -90,6 +90,7 @@ If this protocol is a fork of an existing protocol, this section is critical:
 - **Check the original protocol's security considerations.** Are there security recommendations or invariants from the original that this fork has NOT implemented?
 - **Check the original protocol's known issues.** Are there any disclosed bugs or unresolved issues in the original that also affect this fork?
 - **Inherited vulnerabilities.** A fork inherits not just security from an established protocol, but also its vulnerabilities. "Minor" modifications — custom proxies, oracle mechanisms, admin controls, fee logic — are frequently the source of new critical exploits.
+- **Pin the fork point.** Identify the exact commit/version the fork is based on. Then check the original protocol's commit history AFTER that point — any bug fixes merged upstream that the fork hasn't pulled are live vulnerabilities in the fork. Check the original's recent commits, merged PRs, and security patches. If the fork is months behind, every upstream fix is a potential finding.
 - **Upgraded dependencies.** Did the fork change compiler version, OpenZeppelin version, or other dependencies? Check for breaking changes or deprecated patterns.
 
 ### 15. What's NOT Listed Above
