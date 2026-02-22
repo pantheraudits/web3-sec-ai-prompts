@@ -1,11 +1,11 @@
 ---
 name: panther-audit
-description: Automated smart contract security audit pipeline. Runs 4 phases — context building, dual-expert review, adversarial triage, and structured reporting. Use when auditing smart contracts, reviewing Solidity/Move/Vyper/Rust code for vulnerabilities, or when the user asks to audit, review, or find bugs in Web3 code.
+description: Automated smart contract security audit pipeline. Auto-detects codebase size and scales accordingly — standard mode for small codebases, chunk mode with persistent state for large ones. Runs context building, dual-expert review, adversarial triage, and structured reporting. Use when auditing smart contracts, reviewing Solidity/Move/Vyper/Rust code for vulnerabilities, or when the user asks to audit, review, or find bugs in Web3 code.
 ---
 
 # Panther Audit
 
-Automated pipeline that runs a full security review in 4 phases. Each phase feeds the next — context sharpens the review, the review feeds the triager, and only findings that survive triage make it to the report.
+Automated pipeline that runs a full security review. Auto-detects codebase size and scales accordingly — small codebases get a direct 4-phase review, large codebases activate chunk mode with persistent state, deduplication, and cross-module analysis.
 
 ## When to Use
 
@@ -20,7 +20,50 @@ Do NOT use for:
 - Non-security code reviews
 - Architecture design (without security focus)
 
-## How It Works
+## Before Starting
+
+Determine what you're working with:
+
+1. **Contract code** — The user must provide actual code (pasted or file path). Do not proceed without it.
+2. **Scope** — Which contracts/directory are in scope? If unclear, ask.
+3. **Known issues** — Any previously disclosed bugs to skip? If unclear, assume none.
+4. **Custom primer** (optional) — If the user has built a primer using `common/custom-primer.md`, incorporate their entries into the review phase.
+
+---
+
+## Step 0: SIZE DETECTION
+
+Before any audit work, determine the codebase size to select the right mode.
+
+**Run this command** (adapt file extensions to the language):
+
+```bash
+find [SCOPE_DIR] -name "*.sol" -o -name "*.vy" -o -name "*.rs" -o -name "*.move" | xargs wc -l
+```
+
+**Also check** if a previous `audit_state.json` exists in the project root. If it does and has modules with status "pending", this is a **resumed audit** — read `chunk-pipeline.md` and continue from where it left off.
+
+**Route based on total line count:**
+
+- **NSLOC <= 5000** → Run **STANDARD MODE** (Phase 1-4 below)
+- **NSLOC > 5000** → Run **CHUNK MODE** — read and follow [`chunk-pipeline.md`](chunk-pipeline.md)
+
+State the detected mode:
+```
+CODEBASE SCAN
+=============
+Total files:  [N]
+Total NSLOC:  [N]
+Mode:         STANDARD / CHUNK
+```
+
+If CHUNK MODE, stop here and switch to `chunk-pipeline.md`. Everything below is STANDARD MODE only.
+
+---
+
+# STANDARD MODE (NSLOC <= 5000)
+
+For small-to-medium codebases that fit comfortably in context. This is the original 4-phase pipeline.
 
 ```
 Phase 1: CONTEXT    →  Detect chain/type, map architecture, identify attack surface
@@ -30,15 +73,6 @@ Phase 4: REPORT     →  Structured findings with severity scores and PoC guidan
 ```
 
 Each phase produces output that feeds into the next. Do NOT skip phases or reorder them.
-
-## Before Starting
-
-Determine what you're working with:
-
-1. **Contract code** — The user must provide actual code (pasted or file path). Do not proceed without it.
-2. **Scope** — Which contracts are in scope? If unclear, ask.
-3. **Known issues** — Any previously disclosed bugs to skip? If unclear, assume none.
-4. **Custom primer** (optional) — If the user has built a primer using `common/custom-primer.md`, incorporate their entries into Phase 2.
 
 ---
 
@@ -221,6 +255,7 @@ State: `--- PHASE 4 COMPLETE — AUDIT FINISHED ---`
 - **Never skip phases.** Even if the contract looks simple, run all 4 phases.
 - **Never fabricate findings.** If the code is solid, say so. An empty report is better than false positives.
 - **If borderline severity, round DOWN.** Over-classification wastes everyone's time.
-- **One contract at a time.** If multiple contracts are in scope, run the full pipeline on each separately. Cross-contract interactions should be noted but reviewed per-contract.
+- **Standard mode: one contract at a time.** If multiple contracts are in scope, run the full pipeline on each separately. Cross-contract interactions should be noted but reviewed per-contract.
+- **Chunk mode: follow chunk-pipeline.md.** Do not try to manually manage large codebases — let the chunking system handle it.
 - **Custom primers take priority.** If the user provides primer entries, they've already done manual review. Treat their observations as high-priority investigation targets.
 - **The user is the final reviewer.** Flag findings for PoC verification. Never claim certainty without proof.

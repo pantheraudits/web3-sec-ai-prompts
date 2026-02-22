@@ -15,7 +15,7 @@ Battle-tested prompts designed to accelerate your Web3 security workflow — fro
 | `contests/` | Audit contest strategy, time management, and report templates |
 | `zk-audits/` | ZK circuit audit guide — soundness, completeness, privacy, DSL-specific checks |
 | `common/` | **Shared review checklist**, **multi-expert review**, **custom primer guide**, **protocol detection**, **grep patterns**, attack vectors, severity assessment, Solidity patterns |
-| `claude-skill/` | **Panther Audit** — automated skill that runs the full pipeline (context → review → triage → report) in Cursor/Claude Code |
+| `claude-skill/` | **Panther Audit** — automated skill that auto-scales with codebase size: standard 4-phase review for small codebases, chunk mode with persistent state and deduplication for large ones (5k-30k+ NSLOC) |
 
 ## Quick Start (2 minutes)
 
@@ -63,11 +63,14 @@ For maximum coverage, chain the prompts in this order. Each step is marked as ma
 | Contest (time-boxed) | 1 → 2 → 6 → 7 → 8 |
 | ZK circuit audit | 1 → 4 → [`zk-audits/hunting-guide.md`](zk-audits/hunting-guide.md) |
 
-### Automated Pipeline (Audit Forge)
+### Automated Pipeline (Panther Audit)
 
-Don't want to run each step manually? **Panther Audit** (`claude-skill/`) is a Cursor/Claude skill that automates the full pipeline. Install it once, say "audit `src/Vault.sol`", and it runs all 4 phases (context → dual-expert review → adversarial triage → structured report) automatically.
+Don't want to run each step manually? **Panther Audit** (`claude-skill/`) is a Cursor/Claude skill that automates the full pipeline. It auto-detects codebase size and scales accordingly:
 
-See **[`claude-skill/README.md`](claude-skill/README.md)** for step-by-step installation and a concrete walkthrough of auditing a protocol. The skill reads from the same `common/` files — so any customizations you make to the checklists apply to both the manual prompts and the automated skill.
+- **Small codebases (under 5k NSLOC):** Say `"audit src/Vault.sol"` and it runs 4 phases (context → dual-expert review → adversarial triage → structured report) automatically.
+- **Large codebases (5k-30k+ NSLOC):** Say `"audit src/"` and it activates chunk mode — splits the codebase into modules, audits each with persistent state saved to `audit_state.json`, deduplicates findings across modules, runs cross-module analysis, and generates a consolidated report. Supports resuming interrupted audits.
+
+See **[`claude-skill/README.md`](claude-skill/README.md)** for installation, walkthroughs for both modes, and the `audit_state.json` reference. The skill reads from the same `common/` files — so any customizations you make to the checklists apply to both the manual prompts and the automated skill.
 
 ### What's in `common/`
 
