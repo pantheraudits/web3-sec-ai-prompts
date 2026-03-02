@@ -86,6 +86,7 @@ The `common/` directory contains shared prompts and tools used across all engage
 | [`severity-assessment.md`](common/severity-assessment.md) | Quantitative severity formula (Impact × Likelihood × Exploitability) | When classifying any finding — prevents over/under-rating |
 | [`defi-attack-vectors.md`](common/defi-attack-vectors.md) | Known DeFi attack patterns (flash loans, oracles, MEV, bridges, tokens) | When reviewing DeFi protocols |
 | [`solidity-patterns.md`](common/solidity-patterns.md) | Common Solidity vulnerability patterns (reentrancy, access control, arithmetic) | Quick first-pass scan of any Solidity contract |
+| [`move-patterns.md`](common/move-patterns.md) | Move/Sui/Aptos vulnerability patterns from 1141 real findings (generic type confusion, capability forgery, visibility bugs, accumulator exploits) | When reviewing Move contracts — auto-referenced by protocol detection |
 
 ### Make It Your Own
 
@@ -133,6 +134,7 @@ The prompts, rules, and heuristics in this repo are shaped by lessons learned fr
 - [Solodit](https://solodit.cyfrin.io/)
 - [Updraft Cyfrin](https://updraft.cyfrin.io/)
 - [Forefy .context](https://github.com/anthropics/courses) — multi-expert review pattern, severity formula, and protocol detection heuristics adapted from their agentic audit framework
+- [Move Vulnerability Database](https://movemaverick.github.io/move-vulnerability-database/) by MoveMaverick — 1141 findings from 200+ Move audit reports, used to build `common/move-patterns.md`
 
 **Videos:**
 - [Deep Dive into LLMs like ChatGPT](https://www.youtube.com/watch?v=7xTGNNLPyMI)
