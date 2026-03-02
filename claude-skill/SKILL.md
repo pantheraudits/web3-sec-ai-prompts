@@ -122,6 +122,12 @@ Two independent expert passes over the contract code. Each pass has a different 
 
 **Read** `common/review-checklist.md` for the 15-section checklist and `common/multi-expert-review.md` for the full multi-expert methodology.
 
+**Language-specific patterns:** Based on the language detected in Phase 1, also read the corresponding pattern file:
+- **Solidity** → `common/solidity-patterns.md`
+- **Move (Sui/Aptos)** → `common/move-patterns.md`
+
+Apply BOTH the generic checklist AND the language-specific patterns during the review.
+
 If the user provided a custom primer, investigate every primer entry during BOTH passes.
 
 ### Pass A: Systematic Auditor
