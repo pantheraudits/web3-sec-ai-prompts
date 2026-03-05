@@ -87,6 +87,7 @@ The `common/` directory contains shared prompts and tools used across all engage
 | [`defi-attack-vectors.md`](common/defi-attack-vectors.md) | Known DeFi attack patterns (flash loans, oracles, MEV, bridges, tokens) | When reviewing DeFi protocols |
 | [`solidity-patterns.md`](common/solidity-patterns.md) | Common Solidity vulnerability patterns (reentrancy, access control, arithmetic) | Quick first-pass scan of any Solidity contract |
 | [`move-patterns.md`](common/move-patterns.md) | Move/Sui/Aptos vulnerability patterns from 1141 real findings (generic type confusion, capability forgery, visibility bugs, accumulator exploits) | When reviewing Move contracts — auto-referenced by protocol detection |
+| [`solana-patterns.md`](common/solana-patterns.md) | Solana/Anchor vulnerability patterns (account validation, PDA security, CPI safety, release-mode arithmetic, Token-2022) | When reviewing Solana programs — auto-referenced by protocol detection |
 
 ### Make It Your Own
 
@@ -135,6 +136,8 @@ The prompts, rules, and heuristics in this repo are shaped by lessons learned fr
 - [Updraft Cyfrin](https://updraft.cyfrin.io/)
 - [Forefy .context](https://github.com/anthropics/courses) — multi-expert review pattern, severity formula, and protocol detection heuristics adapted from their agentic audit framework
 - [Move Vulnerability Database](https://movemaverick.github.io/move-vulnerability-database/) by MoveMaverick — 1141 findings from 200+ Move audit reports, used to build `common/move-patterns.md`
+- [Safe Solana Builder](https://github.com/Frankcastleauditor/safe-solana-builder) by Frank Castle — Solana security rules for Anchor and native Rust, used to build `common/solana-patterns.md`
+- [Trail of Bits Solana Security Research](https://blog.trailofbits.com/) — Solana vulnerability scanner patterns and audit methodology
 
 **Videos:**
 - [Deep Dive into LLMs like ChatGPT](https://www.youtube.com/watch?v=7xTGNNLPyMI)

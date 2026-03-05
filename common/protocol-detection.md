@@ -137,8 +137,11 @@ After detecting the language, apply the corresponding vulnerability patterns fil
 |----------|-------------|---------------|
 | Solidity | [`common/solidity-patterns.md`](solidity-patterns.md) | Reentrancy, access control, integer math, token handling, oracles, upgradability, MEV |
 | Move (Sui/Aptos) | [`common/move-patterns.md`](move-patterns.md) | Generic type validation, function visibility, capability forgery, accumulator ordering, data structure bugs — derived from 1141 findings across 200+ Move audits |
+| Solana (Rust/Anchor) | [`common/solana-patterns.md`](solana-patterns.md) | Account validation, PDA security, CPI safety, release-mode arithmetic, Token-2022 — informed by Wormhole, Mango, Cashio exploits |
 
 If the protocol is written in Move, **always** run `common/move-patterns.md` alongside the standard review checklist. Move has fundamentally different vulnerability classes than Solidity (generic type confusion, capability-based access control, object/UID forgery).
+
+If the protocol is written in Rust/Anchor for Solana, **always** run `common/solana-patterns.md` alongside the standard review checklist. Solana has fundamentally different vulnerability classes than EVM (account validation model, PDA-based addressing, CPI trust boundaries, release-mode arithmetic without overflow checks).
 
 ## Usage Tips
 

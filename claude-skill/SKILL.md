@@ -125,6 +125,7 @@ Two independent expert passes over the contract code. Each pass has a different 
 **Language-specific patterns:** Based on the language detected in Phase 1, also read the corresponding pattern file:
 - **Solidity** → `common/solidity-patterns.md`
 - **Move (Sui/Aptos)** → `common/move-patterns.md`
+- **Solana (Rust/Anchor)** → `common/solana-patterns.md`
 
 Apply BOTH the generic checklist AND the language-specific patterns during the review.
 

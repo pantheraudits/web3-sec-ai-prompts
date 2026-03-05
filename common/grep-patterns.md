@@ -160,6 +160,48 @@ rg "10000|10_000|BPS|bps|BASIS|PERCENT|FEE" --glob "*.sol"
 rg "days|hours|minutes|weeks|365|86400|3600" --glob "*.sol"
 ```
 
+### Solana / Rust-Anchor
+
+```bash
+# CPI calls (cross-program invocation — Solana's external call equivalent)
+rg "invoke\(|invoke_signed\(" --glob "*.rs"
+rg "CpiContext" --glob "*.rs"
+rg "anchor_lang::solana_program::program::invoke" --glob "*.rs"
+
+# Account validation (missing checks = Solana's #1 vulnerability class)
+rg "is_signer|\.key\(\)" --glob "*.rs"
+rg "\.owner\s*==" --glob "*.rs"
+rg "UncheckedAccount|AccountInfo" --glob "*.rs"
+rg "has_one|constraint\s*=" --glob "*.rs"
+
+# PDA derivation and bump handling
+rg "find_program_address|create_program_address" --glob "*.rs"
+rg "seeds\s*=|bump\s*=" --glob "*.rs"
+rg "Pubkey::find_program_address" --glob "*.rs"
+
+# Arithmetic safety (Rust release mode DISABLES overflow checks)
+rg "checked_add|checked_sub|checked_mul|checked_div" --glob "*.rs"
+rg "\.unwrap\(\)|\.expect\(" --glob "*.rs"
+rg "\bas\s+(u8|u16|u32|u64|u128|i8|i16|i32|i64|i128|usize)\b" --glob "*.rs"
+rg "overflow-checks" --glob "Cargo.toml"
+
+# Anchor-specific patterns
+rg "init_if_needed" --glob "*.rs"
+rg "remaining_accounts" --glob "*.rs"
+rg "#\[account\(" --glob "*.rs"
+rg "close\s*=" --glob "*.rs"
+
+# Token operations (Token-2022 compatibility)
+rg "transfer_checked|TransferChecked" --glob "*.rs"
+rg "Token2022|token_2022|spl_token_2022" --glob "*.rs"
+rg "spl_token|anchor_spl::token" --glob "*.rs"
+
+# Account lifecycle (closing, rent, sysvars)
+rg "close_account|CloseAccount" --glob "*.rs"
+rg "rent_exempt|Rent::get" --glob "*.rs"
+rg "Sysvar|Clock::get|sysvar::instructions" --glob "*.rs"
+```
+
 ## Prompt: AI-Assisted Surface Mapping
 
 After running grep patterns, feed the results to the AI for prioritization:
@@ -183,4 +225,4 @@ Based on these results:
 - Run these at the start of every engagement — takes 5 minutes, saves hours of aimless code reading.
 - Pipe results to a file (`rg "\.call\{" --glob "*.sol" > surface-map.txt`) for reference throughout the audit.
 - Combine with `protocol-detection.md` — after identifying the protocol type, prioritize the grep patterns most relevant to that type.
-- These patterns are Solidity-focused. For Rust/Anchor, Vyper, Cairo, or Move, adapt the patterns to the equivalent constructs.
+- Solidity and Solana/Rust-Anchor patterns are included above. For Vyper, Cairo, or Move, adapt the patterns to the equivalent constructs.
