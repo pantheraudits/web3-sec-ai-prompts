@@ -103,6 +103,97 @@ The Token Extensions program introduces new attack vectors.
 - **Cross-program invariant violations** — If the program composing with other programs, are invariants maintained when external state changes between instructions in the same transaction?
 - **Price oracle manipulation** — If the program reads prices from on-chain sources (Pyth, Switchboard, Raydium pools), are freshness checks, confidence intervals, and manipulation protections in place?
 
+### 11. Oracle Validation
+
+- **Missing confidence interval check** — Does the program validate that `conf / price` is below a reasonable threshold (e.g., 2–5%)? Wide confidence means the price is unreliable — acting on it enables oracle manipulation.
+- **Stale oracle price** — Is the price timestamp checked against a configurable max age? Using a stale feed lets attackers profit from lagging prices.
+- **Hardcoded staleness/confidence thresholds** — Are oracle thresholds admin-configurable? Hardcoded values can't adapt to market volatility changes.
+- **Retroactive oracle pricing** — Does the program use the current oracle price for positions that were opened at a different price? Store the reference price at action time and use it at settlement — never the live price.
+
+### 12. Fee Completeness
+
+- **Fee bypass on edge-case routes** — Are fees applied to EVERY code path (redemption, withdrawal, single-asset, multi-asset)? Fee bypasses on edge-case routes are a consistent source of protocol drain.
+- **Non-atomic fee deduction** — Are fees deducted from tracked totals atomically with the principal deduction? A separate step can be skipped or reordered.
+- **Pre/post-fee amount mixing** — Is a consistent amount (pre-fee or post-fee) used for both capacity checks and execution? Mixing them causes overfills or incorrect limit-order behavior.
+- **Wrong fee side** — Are fee calculations applied to the input token? Unless the protocol explicitly specifies output-side fees, input-side is safer.
+
+### 13. Token Dust & Time-Limited Account DoS
+
+- **Dust deposit blocking close** — Can an attacker deposit a dust amount to make token account `close` permanently fail? Before closing any token account, sweep or burn the residual balance.
+- **Missing post-transfer balance check** — After any transfer, is the account balance reloaded and verified to detect unexpected deposits?
+- **No dust threshold** — Is there a defined dust threshold? Dust should be swept to treasury or rejected. Never let dust block settlement or close.
+- **Expired accounts left open** — Are time-limited accounts (offers, escrows, locks) closed at expiry? Leaving expired accounts open leaks rent and enables griefing. Allow anyone to trigger closure after expiry.
+- **`init_if_needed` on adversary-controlled accounts** — Can an adversary pre-initialize an account with harmful state via `init_if_needed`? Use `init` for one-time initialization instead.
+
+### 14. State Management — Coupled Fields & Counters
+
+- **Partial field reset on close** — Are ALL logically coupled fields reset atomically in completion and close paths? Leaving a derived field (e.g., `shares_pending`, `rewards_owed`) non-zero after its parent is zeroed breaks protocol invariants permanently.
+- **Merged locked/unlocked balances during migration** — When migrating positions, are pending (locked) and withdrawable (matured) balances transferred as separate quantities? Merging them or reapplying lockup to unlocked amounts is a critical bug.
+- **Counter drift** — Are all counters and statistics updated atomically with the operation that triggers them (fill count, volume, total supply)? A drifting counter is a protocol invariant violation.
+
+### 15. Shared Position & Pool Logic
+
+- **Missing destination preprocessing** — Before transferring shares or liquidity between positions, are BOTH source and destination preprocessed (settle pending fees, snapshot reward accumulators)? Skipping destination lets a user claim fees they never earned.
+- **Self-transfer fee inflation** — Can a no-op or self-transfer pattern inflate fee claims? Verify `source != destination` before any share movement.
+- **Unintended fee asymmetry** — If directional fee asymmetry (buy vs. sell) exists, is it intentional and documented? If symmetry is required, apply fees on input side for both directions.
+
+### 16. Clock & Timing
+
+- **Mixed time units** — Does the program mix slots and seconds in time-dependent logic? A vesting window in seconds compared to raw slots can unlock 4× earlier than intended. Use a single canonical time unit throughout.
+- **Missing scale factor** — When comparing durations across unit boundaries, is the correct scale factor applied (e.g., multiply slot count by `SLOTS_PER_SECOND`)?
+- **Unannotated time fields** — Are time fields annotated with their unit in code (`vesting_end_slot: u64`, `unlock_timestamp_secs: i64`)? Unnamed fields are silently misused as code evolves.
+
+### 17. Token / Mint Integrity
+
+- **Mint close authority set** — Does the program assert that the mint close authority is `None` during initialization? A mint with close authority can be closed and re-initialized at the same address with different decimals, breaking all downstream accounting.
+- **Mutable mint properties assumed immutable** — Are immutable mint properties (decimals, supply cap, authorities) stored at account creation and re-validated on every instruction? Never assume they can't change between calls.
+- **Recycled address state inheritance** — Can a reinitialized account at a recycled address inherit state from its previous lifetime? Validate all fields as if the account is fresh.
+
+### 18. Protocol-Level Input Validation
+
+- **Unconstrained mint acceptance** — Are token mints validated against a protocol allowlist or framework constraints (`mint::authority`, `mint::decimals`)? An unconstrained mint allows arbitrary tokens to be injected into protocol flows.
+- **Same-asset operations** — Where distinct assets are required, is `input_mint != output_mint` enforced? Same-token operations can exploit fee accounting or pool invariants.
+- **Unbounded variable-length inputs** — Are maximum sizes enforced on variable-length inputs (messages, payloads, URIs) before encoding? Unbounded inputs cause compute overruns and silent log truncation.
+- **Unconstrained protocol address updates** — Are protocol-owned addresses (fee recipients, config accounts) verified as expected before updating? An unconstrained update enables fee redirection to attacker-controlled accounts.
+
+### 19. Type Narrowing & Integer Safety
+
+- **Silent integer narrowing** — Are numeric types consistent across instruction params, on-chain state, and emitted events? Silently narrowing (e.g., `u64 → u32`) causes on-chain state and events to diverge, breaking auditability.
+- **Missing upper-bound assertion before cast** — Before any narrowing cast, is an explicit upper-bound asserted (`require!(val <= u32::MAX as u64, ...)`)?
+- **Late input validation** — Are all amounts validated at instruction entry (`> 0`, within protocol min/max bounds) before being passed into math helpers? Deep validation catches bugs late and produces confusing error codes.
+
+### 20. Event Logging
+
+- **Oversized log messages** — Are individual log messages concise? Solana truncates transaction logs at ~10 KB per transaction — long strings are silently dropped.
+- **Free-form string events** — Are critical state changes (amounts, authorities, timestamps, balances) emitted as structured, fixed-size on-chain events rather than free-form strings?
+- **Log-only auditability** — Does the program rely solely on logs for auditability? Logs are ephemeral and truncatable — persist critical state in on-chain accounts.
+
+---
+
+### Framework-Specific Audit Checks
+
+#### Anchor Programs — Check For:
+
+- **`AccountInfo` or `UncheckedAccount` used where `Account<T>` should be** — Missing automatic owner and discriminator checks. Look for missing `/// CHECK:` comments.
+- **`init_if_needed` without reinitialization guard** — Attacker can pre-create the account with malicious state. Prefer `init`.
+- **Missing `reload()` after CPI** — Anchor caches deserialized account data. After any CPI that modifies an account, `reload()` must be called before using the data.
+- **`token::transfer` instead of `token_interface::transfer_checked`** — Legacy transfer hardcodes Token Program ID, fails silently with Token-2022 mints.
+- **Manual pubkey comparison instead of `has_one`** — Constraint-based validation is more reliable and harder to bypass than function-body checks.
+- **User-supplied bump instead of stored canonical bump** — PDAs should store their canonical bump at init and reuse via `bump = account.bump` constraint.
+- **`realloc` without `zero_init = true`** — After a prior decrease in the same transaction, leftover bytes from the shrunk account could be misread as valid data.
+- **Missing `overflow-checks = true` in `[profile.release]`** — Anchor 0.30+ requires this. Without it, release-mode arithmetic silently wraps.
+
+#### Native Rust Programs — Check For:
+
+- **Incomplete validation sequence** — Every account must pass: key check → owner check → signer check → writable check → discriminator check → data validation. Missing any step is a vulnerability.
+- **Missing manual discriminator** — Without Anchor's automatic 8-byte discriminator, native programs must manage type tags manually. Missing discriminators enable type cosplay.
+- **`unwrap()` / `expect()` in instruction handlers** — These panic and abort the transaction. Use `?`, `ok_or()`, or explicit match patterns.
+- **Raw byte casting instead of `try_from_slice`** — Manual transmutes or pointer reads are undefined behavior. Always use Borsh deserialization.
+- **Data length not verified before deserialization** — An undersized account will panic or misread during deserialization. Always check `account.data_len() >= T::LEN`.
+- **Incomplete account close sequence** — Must: (1) zero all data, (2) transfer all lamports, (3) assign to System Program. Skipping any step enables revival or rent theft.
+- **Hardcoded lamports for rent** — Always use `rent.minimum_balance(size)`, never a hardcoded value.
+- **Stale data used after CPI** — Must manually re-borrow and re-deserialize account data after CPI. No automatic `reload()` exists.
+
 For each pattern found:
 1. State the specific vulnerability class from the list above
 2. Indicate severity (Critical/High/Medium/Low) with justification
@@ -118,6 +209,8 @@ For each pattern found:
 - **Release-mode arithmetic** (category 4) is a critical Solana/Rust gotcha. Unlike Solidity 0.8+ which has built-in overflow checks, Rust in release mode silently wraps. Always check `Cargo.toml` for `overflow-checks = true` and look for `checked_*` math.
 - **CPI safety** (category 3) is the Solana equivalent of reentrancy — but the attack surface is broader because CPI can modify any account passed to it, not just the calling contract's state.
 - **Token-2022** (category 6) is an emerging attack surface. Transfer hooks effectively re-enable reentrancy-like patterns on Solana. Any program interacting with Token-2022 mints needs extra scrutiny.
+- **Sections 11-20** cover protocol-level vulnerabilities from real DeFi audits: oracle manipulation, fee bypass, token dust DoS, state management bugs, timing issues, and mint integrity attacks. These are often missed by checklist-only reviews.
+- **Framework-specific checks** at the end cover the most common Anchor footguns and native Rust validation gaps. Apply the relevant section based on the framework detected.
 - Use alongside `common/review-checklist.md` — the generic checklist covers cross-language patterns (business logic, access control, arithmetic), while this file covers Solana-specific gotchas.
 - For grep-based surface mapping of Solana codebases, see the Solana section in `common/grep-patterns.md`.
-- Reference [Safe Solana Builder](https://github.com/Frankcastleauditor/safe-solana-builder) for additional rules and framework-specific details.
+- For building secure Solana programs from scratch, see the [Safe Solana Builder](https://github.com/Frankcastleauditor/safe-solana-builder) skill in `safe-solana-builder/`.

@@ -16,6 +16,7 @@ Battle-tested prompts designed to accelerate your Web3 security workflow — fro
 | `zk-audits/` | ZK circuit audit guide — soundness, completeness, privacy, DSL-specific checks |
 | `common/` | **Shared review checklist**, **multi-expert review**, **custom primer guide**, **protocol detection**, **grep patterns**, attack vectors, severity assessment, Solidity patterns |
 | `claude-skill/` | **Panther Audit** — automated skill that auto-scales with codebase size: standard 4-phase review for small codebases, chunk mode with persistent state and deduplication for large ones (5k-30k+ NSLOC) |
+| `safe-solana-builder/` | **Safe Solana Builder** — skill for generating production-grade, secure Solana programs with full scaffolds, test skeletons, and security checklists. Supports Anchor, Native Rust, and Pinocchio. Based on [Frank Castle's Safe Solana Builder](https://github.com/Frankcastleauditor/safe-solana-builder) |
 
 ## Quick Start (2 minutes)
 
@@ -87,7 +88,7 @@ The `common/` directory contains shared prompts and tools used across all engage
 | [`defi-attack-vectors.md`](common/defi-attack-vectors.md) | Known DeFi attack patterns (flash loans, oracles, MEV, bridges, tokens) | When reviewing DeFi protocols |
 | [`solidity-patterns.md`](common/solidity-patterns.md) | Common Solidity vulnerability patterns (reentrancy, access control, arithmetic) | Quick first-pass scan of any Solidity contract |
 | [`move-patterns.md`](common/move-patterns.md) | Move/Sui/Aptos vulnerability patterns from 1141 real findings (generic type confusion, capability forgery, visibility bugs, accumulator exploits) | When reviewing Move contracts — auto-referenced by protocol detection |
-| [`solana-patterns.md`](common/solana-patterns.md) | Solana/Anchor vulnerability patterns (account validation, PDA security, CPI safety, release-mode arithmetic, Token-2022) | When reviewing Solana programs — auto-referenced by protocol detection |
+| [`solana-patterns.md`](common/solana-patterns.md) | Solana/Anchor vulnerability patterns — 20 categories (account validation, PDA security, CPI safety, arithmetic, Token-2022, oracle manipulation, fee bypass, token dust DoS, state management, pool logic, timing, mint integrity) + framework-specific checks for Anchor and native Rust | When reviewing Solana programs — auto-referenced by protocol detection |
 
 ### Make It Your Own
 
