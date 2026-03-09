@@ -29,4 +29,17 @@ Thanks for your interest in contributing to web3-sec-ai-prompts!
 - `bug-bounty/` — Bug bounty hunting workflows
 - `private-audits/` — Private audit engagement workflows
 - `contests/` — Audit contest strategies
-- `common/` — Shared patterns, attack vectors, severity assessment
+- `zk-audits/` — ZK circuit audit guides
+- `common/` — Shared patterns, attack vectors, severity assessment, language-specific vulnerability patterns
+- `claude-skill/` — Panther Audit automated pipeline (SKILL.md + chunk-pipeline.md)
+- `safe-solana-builder/` — Safe Solana Builder skill for generating secure Solana programs (SKILL.md + references/)
+
+## Adding a New Skill
+
+If you're adding a new skill (like `safe-solana-builder/`):
+
+1. Create a directory at the repo root: `your-skill-name/`
+2. Add `SKILL.md` with YAML frontmatter (`name:` and `description:`) and the full workflow
+3. Put reference files in `your-skill-name/references/` if the skill needs to load knowledge files
+4. Add a `README.md` with installation instructions for Cursor, Claude Code, and Claude.ai
+5. Update the root `README.md` structure table to include your new skill

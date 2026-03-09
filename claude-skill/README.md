@@ -285,3 +285,12 @@ The skill reads from `common/` files. To customize:
 | Modify chunking rules | `claude-skill/chunk-pipeline.md` — edit module grouping or size caps |
 
 Changes apply to both the skill and the manual prompts automatically.
+
+---
+
+## Related: Safe Solana Builder
+
+If you're **building** Solana programs (not auditing them), see [`safe-solana-builder/`](../safe-solana-builder/). It generates production-grade Solana programs with full scaffolds, test skeletons, and security checklists. It's complementary to Panther Audit:
+
+- **Safe Solana Builder** = writes new secure code (proactive)
+- **Panther Audit** = reviews existing code for vulnerabilities (reactive)

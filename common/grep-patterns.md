@@ -200,6 +200,47 @@ rg "spl_token|anchor_spl::token" --glob "*.rs"
 rg "close_account|CloseAccount" --glob "*.rs"
 rg "rent_exempt|Rent::get" --glob "*.rs"
 rg "Sysvar|Clock::get|sysvar::instructions" --glob "*.rs"
+
+# Oracle validation (§11 — confidence, staleness, price feeds)
+rg "price|oracle|pyth|switchboard|chainlink" -i --glob "*.rs"
+rg "confidence|conf\s*[/\.]|stale|max_age|staleness" --glob "*.rs"
+rg "get_price|price_feed|PriceFeed|OraclePrice" --glob "*.rs"
+
+# Fee logic (§12 — fee paths, fee deduction, basis points)
+rg "fee|FEE|basis_point|bps|BPS|10000|10_000" --glob "*.rs"
+rg "protocol_fee|swap_fee|withdrawal_fee|redemption_fee" --glob "*.rs"
+
+# Token dust & account DoS (§13 — dust, close, expiry)
+rg "dust|sweep|burn|residual" --glob "*.rs"
+rg "expire|expiry|expired|deadline" --glob "*.rs"
+
+# State management — coupled fields & counters (§14)
+rg "pending|owed|accrued|accumulated|shares_pending" --glob "*.rs"
+rg "total_supply|total_staked|fill_count|volume" --glob "*.rs"
+
+# Shared position & pool logic (§15 — LP, shares, preprocess)
+rg "shares|liquidity|lp_|pool_|position" --glob "*.rs"
+rg "preprocess|settle|snapshot|accrue" --glob "*.rs"
+
+# Clock & timing (§16 — slot vs seconds, time units)
+rg "Clock::get|slot|timestamp|unix_timestamp" --glob "*.rs"
+rg "SLOTS_PER|seconds|duration|elapsed" --glob "*.rs"
+
+# Mint integrity (§17 — close authority, decimals, reinit)
+rg "close_authority|mint_authority|freeze_authority" --glob "*.rs"
+rg "decimals|supply_cap" --glob "*.rs"
+
+# Protocol-level input validation (§18 — allowlist, mint constraints)
+rg "allowlist|whitelist|approved_mint" --glob "*.rs"
+rg "input_mint.*output_mint|mint::authority|mint::decimals" --glob "*.rs"
+rg "max_len|max_size|MAX_" --glob "*.rs"
+
+# Type narrowing & integer safety (§19 — as casts, try_into)
+rg "as\s+(u8|u16|u32|i32)" --glob "*.rs"
+rg "try_into|try_from|TryInto|TryFrom" --glob "*.rs"
+
+# Event logging (§20 — msg!, emit!, log)
+rg "msg!|emit!|sol_log|log_" --glob "*.rs"
 ```
 
 ## Prompt: AI-Assisted Surface Mapping
